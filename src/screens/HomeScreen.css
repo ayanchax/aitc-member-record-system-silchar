@@ -1,0 +1,25 @@
+.homeScreen__wrapper{
+    height: 100vh;
+    position: relative; 
+    z-index: 9999;
+    }
+
+.homeScreen__wrapper::before {    
+    content: "";
+    background-image: url("https://images.news18.com/ibnlive/uploads/2021/02/1614154183_61uzhmpif5l._sl1132_.jpg");
+    background-repeat:no-repeat;
+    position: absolute;
+    background-size:contain;
+    background-position: center center;
+   top:0px;
+    right: 0px;
+    bottom: 10px;
+    left: 0px;
+    opacity: 0.10;
+}
+
+.homeScreen__wrapper>button {
+    align-items: center;
+   position: relative;
+   
+  }
