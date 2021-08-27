@@ -25,7 +25,7 @@ function Banner() {
 
                     <div className="banner__buttons">
                         <button onClick={(e) => history.push("/registration")} className="banner__button">Add Member</button>
-                        <button className="banner__button">View Members</button>
+                        <button onClick={(e) => history.push("silchar/aitc-members")} className="banner__button">View Members</button>
                     </div>
 
                 </div>
