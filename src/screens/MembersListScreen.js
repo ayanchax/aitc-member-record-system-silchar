@@ -22,7 +22,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import MaterialTable, { MTableToolbar } from "material-table";
+import MaterialTable, { MTableToolbar,MTableBody,MTableCell,MTableBodyRow } from "material-table";
 import MessageIcon from '@material-ui/icons/Message';
 import Button from '@material-ui/core/Button';
 import RefreshIcon from '@material-ui/icons/Refresh';
@@ -76,19 +76,19 @@ function MembersListScreen() {
         }
         getData();
     }, []);
-    useEffect(() => {
-        firebase.firestore().collection('aitc-members').where('testdata', '==', evaluateTestDataBoolean)
-        .orderBy('created', 'desc').onSnapshot((snapshot) => {
-            let _data = []
-            snapshot.docs.map(doc => {
-                _data.push({
-                    id: doc.id, ...doc.data()
-                })
-            });
-            setMembers(_data);
-        })
+    // useEffect(() => {
+    //     firebase.firestore().collection('aitc-members').where('testdata', '==', evaluateTestDataBoolean)
+    //     .orderBy('created', 'desc').onSnapshot((snapshot) => {
+    //         let _data = []
+    //         snapshot.docs.map(doc => {
+    //             _data.push({
+    //                 id: doc.id, ...doc.data()
+    //             })
+    //         });
+    //         setMembers(_data);
+    //     })
 
-    }, [members]);
+    // }, [members]);
 
 
     return (
@@ -153,7 +153,8 @@ function MembersListScreen() {
                         exportButton: true,
                         search: true,
                         searchFieldAlignment: "right",
-                        actionsColumnIndex: -1
+                        actionsColumnIndex: -1,
+                        selection:false
                     }}
                     actions={[
                         {
@@ -181,6 +182,15 @@ function MembersListScreen() {
                             }
                         },
                     ]}
+
+                    components={{
+                        Toolbar: props => (
+                            <div style={{ backgroundColor: '#e8eaf5' }}>
+                                <MTableToolbar {...props} />
+                            </div>
+                        ),
+                         
+                    }}
                     title="List of Members"
                      
                 />
