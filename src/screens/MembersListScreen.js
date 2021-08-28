@@ -22,7 +22,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import MaterialTable, { MTableToolbar, MTableCell } from "material-table";
+import MaterialTable, { MTableToolbar } from "material-table";
 import MessageIcon from '@material-ui/icons/Message';
 import Button from '@material-ui/core/Button';
 import RefreshIcon from '@material-ui/icons/Refresh';
@@ -141,7 +141,13 @@ function MembersListScreen() {
                     data={
                         members
                     }
+                    localization={{
+                        body: {
+                            emptyDataSourceMessage: "No records found.",
+                        },
+                    }}
                     options={{
+                        headerStyle: {backgroundColor: 'grey', color: '#fff'},
                         pageSize: rowsPerPage,
                         pageSizeOptions: [5, 10, 20, { value: members.length, label: 'All' }],
                         exportButton: true,
@@ -176,17 +182,7 @@ function MembersListScreen() {
                         },
                     ]}
                     title="List of Members"
-                    components={{
-                        Toolbar: props => (
-                            <div style={{ backgroundColor: '#e8eaf5' }}>
-                                <MTableToolbar {...props} />
-                            </div>
-
-                        ),
-
-
-
-                    }}
+                     
                 />
             </div>
             <Footer testData={evaluateTestDataBoolean} testDataMessage="Showing Test Data" />
