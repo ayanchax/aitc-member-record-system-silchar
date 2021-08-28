@@ -22,12 +22,16 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import MaterialTable from "material-table";
+import MaterialTable, { MTableToolbar, MTableCell } from "material-table";
 import MessageIcon from '@material-ui/icons/Message';
 import Button from '@material-ui/core/Button';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import Footer from '../Footer';
+
 toast.configure();
 function MembersListScreen() {
     let history = useHistory();
+    const evaluateTestDataBoolean = databaseMode === "test" ? true : false;
     const [members, setMembers] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const tableIcons = {
@@ -51,20 +55,41 @@ function MembersListScreen() {
     };
 
     useEffect(() => {
-        const evaluateTestDataBoolean = databaseMode === "test" ? true : false;
+
         async function getData() {
-            const snapshot = await firebase.firestore().collection('aitc-members')
-                .orderBy('created', 'desc').get()
+            await firebase.firestore().collection('aitc-members')
+                .where('testdata', '==', evaluateTestDataBoolean).orderBy('created', 'desc')
+                .get().then((_snapshot) => {
+                    let _data = []
+                    _snapshot.docs.map(doc => {
+                        _data.push({
+                            id: doc.id, ...doc.data()
+                        })
+                    });
+                    setMembers(_data)
+                }).catch((err) => {
+                    toast.error('Error retrieveing members.', {
+                        position: toast.POSITION.BOTTOM_CENTER,
+                        autoClose: 3000,
+                    });
+                })
+        }
+        getData();
+    }, []);
+    useEffect(() => {
+        firebase.firestore().collection('aitc-members').where('testdata', '==', evaluateTestDataBoolean)
+        .orderBy('created', 'desc').onSnapshot((snapshot) => {
             let _data = []
             snapshot.docs.map(doc => {
                 _data.push({
                     id: doc.id, ...doc.data()
                 })
             });
-            setMembers(_data)
-        }
-        getData();
-    }, []);
+            setMembers(_data);
+        })
+
+    }, [members]);
+
 
     return (
         <div>
@@ -75,14 +100,18 @@ function MembersListScreen() {
                 <img
                     className="w-42 block ml-auto mr-auto justify-center object-contain" src="/resources/static/aitc-logo.PNG" alt="AITC-Logo" />
                 <h3 className=" text-black-300 font-serif"><PeopleIcon /> AITC Silchar</h3>
+
             </div>
             <div className="flex mt-3 justify-center text-center py-3 space-x-2">
-            <Button onClick={(e) => history.push("/")} variant="contained" color="primary">
-                Home
-            </Button>
-            <Button onClick={(e) => history.push("/registration")} variant="contained" color="secondary">
-                Add Member
-            </Button>
+                <Button onClick={(e) => history.push("/")} variant="contained" color="primary">
+                    Home
+                </Button>
+                <Button onClick={(e) => history.push("/registration")} variant="contained" color="secondary">
+                    Add Member
+                </Button>
+                <div title="Refresh"  >
+                    <RefreshIcon onClick={(e) => window.location.reload()} className=" cursor-pointer" />
+                </div>
             </div>
 
             <div className="font-serif text-sm w-full">
@@ -146,9 +175,23 @@ function MembersListScreen() {
                             }
                         },
                     ]}
-                    title="AITC Silchar List of Members"
+                    title="List of Members"
+                    components={{
+                        Toolbar: props => (
+                            <div style={{ backgroundColor: '#e8eaf5' }}>
+                                <MTableToolbar {...props} />
+                            </div>
+
+                        ),
+
+
+
+                    }}
                 />
             </div>
+            <Footer testData={evaluateTestDataBoolean} testDataMessage="Showing Test Data" />
+
+
         </div>
     )
 }
